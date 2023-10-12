@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.19;
 
 // Import OpenZeppelin ERC-1155 contract
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -46,6 +46,12 @@ contract FNFT is ERC1155 {
         address indexed to,
         uint256 indexed fractionTokenId,
         uint256 fractions
+    );
+
+    event Redeemed(
+        address indexed redeemer,
+        uint256 indexed tokenId,
+        uint256 indexed fractionTokenId
     );
 
     constructor(string memory baseURI) ERC1155(baseURI) {}
@@ -130,5 +136,24 @@ contract FNFT is ERC1155 {
         }
 
         emit Transferred(from, to, id, amount);
+    }
+
+    function redeem(uint256 fractionTokenId, address nftContract) external {
+        NFT memory nft = nfts[fractionTokenId];
+
+        require(
+            balanceOf(msg.sender, fractionTokenId) == nft.fractions,
+            "Caller must own all fractions"
+        );
+
+        IERC721(nftContract).safeTransferFrom(
+            address(this),
+            msg.sender,
+            nft.tokenId
+        );
+
+        _burn(msg.sender, fractionTokenId, nft.fractions);
+
+        emit Redeemed(msg.sender, nft.tokenId, fractionTokenId);
     }
 }
