@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import {Test, console2} from "forge-std/Test.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../src/FNFT.sol";
 import "../src/MockNFT.sol";
 import "./Helpers.sol";
@@ -10,6 +11,7 @@ import "./Helpers.sol";
 contract FNFTTest is Helpers {
     TestNFT nft;
     FNFT fnft;
+
     address userA;
     address userB;
     address userC;
